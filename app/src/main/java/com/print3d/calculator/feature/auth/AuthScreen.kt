@@ -719,9 +719,11 @@ private fun BrandFooter(tab: Int) {
         Spacer(Modifier.height(8.dp))
         Text(
             stringResource(R.string.auth_tagline_caption),
-            style = MaterialTheme.typography.bodySmall,
-            color = cs.onSurfaceVariant,
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = cs.onSurface.copy(alpha = 0.85f),
+            textAlign = TextAlign.Center,
+            lineHeight = MaterialTheme.typography.titleLarge.lineHeight
         )
     }
 }

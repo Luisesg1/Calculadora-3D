@@ -313,4 +313,15 @@
     <string name="auth_error_password_policy">Password does not meet the requirements</string>
     <string name="auth_error_password_mismatch">Passwords do not match</string>
     <string name="auth_error_unknown">Something went wrong. Try again.</string>
+    <!-- Premium auth redesign -->
+    <string name="auth_brand_name">Cotiza 3D</string>
+    <string name="auth_brand_descriptor">CALCULATOR</string>
+    <string name="auth_logo_cd">Cotiza 3D logo</string>
+    <string name="auth_email_label">Email</string>
+    <string name="auth_email_placeholder">email@example.com</string>
+    <string name="auth_or_continue">or continue with</string>
+    <string name="auth_all_good">All good</string>
+    <string name="auth_tagline_login">Price smarter.\nQuote faster.\nPrint with profit.</string>
+    <string name="auth_tagline_signup">Everything you need\nto price and sell.</string>
+    <string name="auth_tagline_caption">More control. More profit.</string>
 </resources>

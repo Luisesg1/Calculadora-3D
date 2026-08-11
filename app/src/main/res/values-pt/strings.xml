@@ -313,4 +313,15 @@
     <string name="auth_error_password_policy">A senha não atende aos requisitos</string>
     <string name="auth_error_password_mismatch">As senhas não coincidem</string>
     <string name="auth_error_unknown">Ocorreu um erro. Tente novamente.</string>
+    <!-- Premium auth redesign -->
+    <string name="auth_brand_name">Cotiza 3D</string>
+    <string name="auth_brand_descriptor">CALCULADORA</string>
+    <string name="auth_logo_cd">Logo do Cotiza 3D</string>
+    <string name="auth_email_label">E-mail</string>
+    <string name="auth_email_placeholder">email@exemplo.com</string>
+    <string name="auth_or_continue">ou continue com</string>
+    <string name="auth_all_good">Tudo certo</string>
+    <string name="auth_tagline_login">Calcule melhor.\nOrce mais rápido.\nImprima com lucro.</string>
+    <string name="auth_tagline_signup">Tudo o que você precisa\npara calcular e vender.</string>
+    <string name="auth_tagline_caption">Mais controle. Mais lucro.</string>
 </resources>
