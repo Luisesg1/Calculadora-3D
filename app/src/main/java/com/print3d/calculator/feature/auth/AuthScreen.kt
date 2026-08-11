@@ -19,6 +19,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -327,103 +328,15 @@ fun AuthScreen(
 
 @Composable
 private fun BrandLogo(size: androidx.compose.ui.unit.Dp) {
-    val cs = MaterialTheme.colorScheme
-    val top = cs.primary
-    val leftFace = cs.primary.copy(alpha = 0.78f)
-    val rightFace = cs.primary.copy(alpha = 0.55f)
-    val grid = cs.onPrimary.copy(alpha = 0.55f)
-    val nozzle = cs.onSurface
-
-    Box(
-        Modifier
+    // The real app launcher icon (adaptive icon: background color + foreground),
+    // clipped to a rounded square so it matches the icon on the home screen.
+    Image(
+        painter = painterResource(R.mipmap.ic_launcher),
+        contentDescription = stringResource(R.string.auth_logo_cd),
+        modifier = Modifier
             .size(size)
             .clip(RoundedCornerShape(22.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(
-                        cs.primary.copy(alpha = 0.16f),
-                        cs.surfaceVariant.copy(alpha = 0.35f)
-                    )
-                )
-            )
-            .border(1.dp, cs.outline.copy(alpha = 0.6f), RoundedCornerShape(22.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        androidx.compose.foundation.Canvas(Modifier.fillMaxSize().padding(14.dp)) {
-            val w = this.size.width
-            val h = this.size.height
-            val cx = w / 2f
-            val cy = h * 0.56f
-            val s = w * 0.34f          // half-width of top diamond
-            val half = s * 0.5f        // vertical radius of top diamond
-            val depth = s * 0.9f       // height of side faces
-
-            // Diamond (top) vertices
-            val tTop = Offset(cx, cy - half)
-            val tRight = Offset(cx + s, cy)
-            val tBottom = Offset(cx, cy + half)
-            val tLeft = Offset(cx - s, cy)
-
-            fun poly(pts: List<Offset>) = Path().apply {
-                moveTo(pts[0].x, pts[0].y)
-                for (i in 1 until pts.size) lineTo(pts[i].x, pts[i].y)
-                close()
-            }
-
-            // Right face
-            drawPath(
-                poly(listOf(tRight, tBottom, Offset(cx, cy + half + depth), Offset(cx + s, cy + depth))),
-                rightFace
-            )
-            // Left face
-            drawPath(
-                poly(listOf(tLeft, tBottom, Offset(cx, cy + half + depth), Offset(cx - s, cy + depth))),
-                leftFace
-            )
-            // Top face
-            drawPath(poly(listOf(tTop, tRight, tBottom, tLeft)), top)
-
-            // Grid on top face (calculator / print bed) — 3x3
-            val div = 3
-            for (i in 1 until div) {
-                val f = i.toFloat() / div
-                // lines parallel to tLeft->tTop edge
-                drawLine(
-                    grid,
-                    Offset(tLeft.x + (tBottom.x - tLeft.x) * f, tLeft.y + (tBottom.y - tLeft.y) * f),
-                    Offset(tTop.x + (tRight.x - tTop.x) * f, tTop.y + (tRight.y - tTop.y) * f),
-                    strokeWidth = 1.2f
-                )
-                drawLine(
-                    grid,
-                    Offset(tLeft.x + (tTop.x - tLeft.x) * f, tLeft.y + (tTop.y - tLeft.y) * f),
-                    Offset(tBottom.x + (tRight.x - tBottom.x) * f, tBottom.y + (tRight.y - tBottom.y) * f),
-                    strokeWidth = 1.2f
-                )
-            }
-
-            // Print nozzle above the bed
-            val nx = cx
-            val ny = cy - half - depth * 0.55f
-            drawPath(
-                poly(
-                    listOf(
-                        Offset(nx - s * 0.16f, ny),
-                        Offset(nx + s * 0.16f, ny),
-                        Offset(nx, ny + s * 0.28f)
-                    )
-                ),
-                nozzle
-            )
-            drawLine(
-                nozzle,
-                Offset(nx, ny + s * 0.28f),
-                Offset(nx, tTop.y),
-                strokeWidth = 2f,
-                cap = StrokeCap.Round
-            )
-        }
-    }
+    )
 }
 
 /* ------------------------------------------------------------------ */
