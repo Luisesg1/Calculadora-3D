@@ -21,11 +21,13 @@ object CalculationEngine {
     ): QuoteResult {
         val failureMult = 1.0 + (input.failurePct.coerceAtLeast(0.0) / 100.0)
         val wasteMult = 1.0 + (input.wastePct.coerceAtLeast(0.0) / 100.0)
+        // Filament-type surcharge: harder materials (PETG, ABS, resin…) cost more to run.
+        val filamentMult = 1.0 + (input.filamentSurchargePct.coerceAtLeast(0.0) / 100.0)
 
-        // Sum each material line: grams × waste × its price per gram.
+        // Sum each material line: grams × waste × its price per gram, then the filament surcharge.
         val materialBase = input.effectiveMaterialLines.sumOf { line ->
             line.grams * wasteMult * (materialLookup(line.materialId)?.pricePerGram ?: 0.0)
-        }
+        } * filamentMult
 
         val electricityBase =
             (machine?.powerW ?: 0.0) / 1000.0 * input.printTimeH * electricityRatePerKwh
