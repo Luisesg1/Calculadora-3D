@@ -217,42 +217,6 @@ fun CalculatorScreen(
                             onAddNew = { showAddMachine = true }
                         )
 
-                        // Filament type: adds an optional % surcharge on top of the material cost.
-                        // The dropdown is just a quick preset — the % field stays fully editable.
-                        val filamentOptions = listOf(
-                            0L to stringResource(R.string.fil_pla),
-                            5L to stringResource(R.string.fil_pla_plus),
-                            10L to stringResource(R.string.fil_petg),
-                            15L to stringResource(R.string.fil_abs),
-                            20L to stringResource(R.string.fil_tpu),
-                            30L to stringResource(R.string.fil_asa),
-                            50L to stringResource(R.string.fil_resin),
-                            80L to stringResource(R.string.fil_resin_abs),
-                        )
-                        val curFilamentPct = form.filamentSurchargePct.toDoubleOrNull()?.toLong()
-                        val customFilamentLabel = stringResource(R.string.fil_custom)
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(Modifier.weight(1f)) {
-                                DropdownField(
-                                    label = stringResource(R.string.field_filament_type),
-                                    selectedText = filamentOptions.firstOrNull { it.first == curFilamentPct }?.second
-                                        ?: customFilamentLabel,
-                                    options = filamentOptions,
-                                    onSelect = { form = form.copy(filamentSurchargePct = it.toString()) }
-                                )
-                            }
-                            AppTextField(
-                                form.filamentSurchargePct,
-                                { form = form.copy(filamentSurchargePct = it) },
-                                stringResource(R.string.field_surcharge_pct),
-                                Modifier.width(96.dp),
-                                numeric = true
-                            )
-                        }
-
                         // One or more materials, each with its own grams.
                         form.materialLines.forEachIndexed { i, line ->
                             val selMat = materials.firstOrNull { it.id == line.materialId }

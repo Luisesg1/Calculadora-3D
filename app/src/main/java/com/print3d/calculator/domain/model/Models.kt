@@ -86,8 +86,6 @@ data class QuoteInput(
     val failurePct: Double = 0.0,
     val wastePct: Double = 0.0,
     val extraCosts: List<CostLine> = emptyList(),
-    /** Extra % on material cost for the filament type (0 = PLA baseline). */
-    val filamentSurchargePct: Double = 0.0,
     val marginPct: Double = 40.0,
     val taxPct: Double = 0.0,
     val discountPct: Double = 0.0,

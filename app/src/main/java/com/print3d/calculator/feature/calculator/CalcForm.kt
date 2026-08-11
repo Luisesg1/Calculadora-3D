@@ -25,7 +25,6 @@ data class CalcForm(
     val wastePct: String = "5",
     val builtInCosts: Map<String, String> = emptyMap(),
     val customCosts: List<CostLine> = emptyList(),
-    val filamentSurchargePct: String = "0",
     val marginPct: String = "40",
     val taxPct: String = "0",
     val discountPct: String = "0",
@@ -58,7 +57,6 @@ data class CalcForm(
             failurePct = failurePct.toDoubleOrNull() ?: 0.0,
             wastePct = wastePct.toDoubleOrNull() ?: 0.0,
             extraCosts = builtIn + customCosts,
-            filamentSurchargePct = filamentSurchargePct.toDoubleOrNull() ?: 0.0,
             marginPct = marginPct.toDoubleOrNull() ?: 0.0,
             taxPct = taxPct.toDoubleOrNull() ?: 0.0,
             discountPct = discountPct.toDoubleOrNull() ?: 0.0,
@@ -90,7 +88,6 @@ data class CalcForm(
             customCosts = input.extraCosts.filter { line ->
                 CostKeys.BUILT_IN.none { it.first == line.key }
             },
-            filamentSurchargePct = input.filamentSurchargePct.toString(),
             marginPct = input.marginPct.toString(),
             taxPct = input.taxPct.toString(),
             discountPct = input.discountPct.toString(),
