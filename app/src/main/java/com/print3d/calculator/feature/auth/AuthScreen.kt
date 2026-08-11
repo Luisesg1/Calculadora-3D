@@ -65,6 +65,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
@@ -328,15 +330,25 @@ fun AuthScreen(
 
 @Composable
 private fun BrandLogo(size: androidx.compose.ui.unit.Dp) {
-    // The real app launcher icon (adaptive icon: background color + foreground),
-    // clipped to a rounded square so it matches the icon on the home screen.
-    Image(
-        painter = painterResource(R.mipmap.ic_launcher),
-        contentDescription = stringResource(R.string.auth_logo_cd),
-        modifier = Modifier
+    // Recreate the launcher (adaptive) icon: background color + foreground image.
+    // painterResource can't load the adaptive-icon XML, so we compose the parts.
+    // The foreground has a ~33% safe-zone margin; scale it up so it fills like the
+    // masked launcher icon.
+    Box(
+        Modifier
             .size(size)
             .clip(RoundedCornerShape(22.dp))
-    )
+            .background(colorResource(R.color.ic_launcher_background)),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = stringResource(R.string.auth_logo_cd),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(1.5f)
+        )
+    }
 }
 
 /* ------------------------------------------------------------------ */
