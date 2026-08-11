@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cotiza 3D: Calculadora</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_greeting">Hola</string>
+    <string name="dashboard_subtitle">Calcula el precio justo de tus impresiones 3D</string>
+    <string name="menu_new_quote">Nueva cotización</string>
+    <string name="menu_new_quote_desc">Calcula un nuevo trabajo</string>
+    <string name="menu_history">Historial</string>
+    <string name="menu_history_desc">Tus cotizaciones guardadas</string>
+    <string name="menu_materials">Materiales</string>
+    <string name="menu_materials_desc">Filamentos y resinas</string>
+    <string name="menu_machines">Máquinas</string>
+    <string name="menu_machines_desc">Tus impresoras</string>
+    <string name="menu_settings">Ajustes</string>
+    <string name="menu_settings_desc">Moneda e idioma</string>
+    <string name="menu_export">Exportar</string>
+    <string name="menu_export_desc">Respaldo de datos</string>
+    <string name="menu_stats">Estadísticas</string>
+    <string name="menu_stats_desc">Ganancias y pérdidas</string>
+    <string name="stats_income">Ingresos</string>
+    <string name="stats_costs">Costos</string>
+    <string name="stats_profit">Ganancia neta</string>
+    <string name="stats_avg">Ticket promedio</string>
+    <string name="stats_quotes">Cotizaciones</string>
+    <string name="stats_empty">Sin datos en este periodo</string>
+    <string name="range_month">Este mes</string>
+    <string name="range_3m">3 meses</string>
+    <string name="range_year">Año</string>
+    <string name="range_all">Todo</string>
+
+    <!-- Common -->
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="duplicate">Duplicar</string>
+    <string name="add">Agregar</string>
+    <string name="search">Buscar</string>
+    <string name="share">Compartir</string>
+    <string name="optional">opcional</string>
+    <string name="required">Requerido</string>
+    <string name="confirm_delete">¿Eliminar este elemento?</string>
+    <string name="confirm_delete_msg">Esta acción no se puede deshacer.</string>
+    <string name="confirm_duplicate">¿Duplicar este elemento?</string>
+    <string name="coming_soon">Próximamente</string>
+    <string name="empty_generic">Nada por aquí todavía</string>
+
+    <!-- Calculator sections -->
+    <string name="calc_title">Nueva cotización</string>
+    <string name="section_job">Información del trabajo</string>
+    <string name="section_material">Material</string>
+    <string name="section_print">Datos de impresión</string>
+    <string name="section_costs">Costos adicionales</string>
+    <string name="section_margin">Margen y ajustes</string>
+    <string name="section_result">Resultado</string>
+
+    <string name="field_client">Nombre del cliente</string>
+    <string name="field_project">Nombre del proyecto</string>
+    <string name="field_notes">Observaciones</string>
+    <string name="field_quantity">Cantidad de piezas</string>
+
+    <string name="field_select_material">Seleccionar material</string>
+    <string name="field_select_machine">Seleccionar máquina</string>
+    <string name="field_grams">Gramos utilizados</string>
+    <string name="field_meters">Metros utilizados</string>
+    <string name="field_print_time">Tiempo de impresión (h)</string>
+    <string name="field_post_time">Tiempo post-proceso (h)</string>
+    <string name="field_failure">Fallos esperados (%)</string>
+    <string name="field_waste">Desperdicio (%)</string>
+
+    <string name="field_labor">Mano de obra</string>
+    <string name="field_packaging">Empaquetado</string>
+    <string name="field_shipping">Envío</string>
+    <string name="field_supplies">Insumos</string>
+    <string name="field_paint">Pintura</string>
+    <string name="field_sanding">Lijado</string>
+    <string name="field_glue">Pegamento</string>
+    <string name="field_magnets">Imanes</string>
+    <string name="field_screws">Tornillos</string>
+    <string name="field_bearings">Rodamientos</string>
+    <string name="field_electronics">Electrónica</string>
+    <string name="add_custom_cost">Agregar costo personalizado</string>
+
+    <string name="field_margin">Margen de ganancia (%)</string>
+    <string name="field_tax">IVA (%)</string>
+    <string name="field_discount">Descuento (%)</string>
+    <string name="field_surcharge">Recargo (%)</string>
+    <string name="field_final_price">Precio final</string>
+    <string name="field_final_price_manual">Editar precio manualmente</string>
+
+    <string name="result_material">Material</string>
+    <string name="result_electricity">Electricidad</string>
+    <string name="result_machine">Máquina</string>
+    <string name="result_labor">Mano de obra</string>
+    <string name="result_extras">Otros</string>
+    <string name="result_profit">Ganancia</string>
+    <string name="result_subtotal">Subtotal</string>
+    <string name="result_tax">IVA</string>
+    <string name="result_discount">Descuento</string>
+    <string name="result_surcharge_line">Recargo</string>
+    <string name="result_total">TOTAL</string>
+    <string name="result_per_unit">Por pieza</string>
+    <string name="save_quote">Guardar cotización</string>
+    <string name="export_pdf">Exportar PDF</string>
+    <string name="export_image">Exportar imagen</string>
+
+    <!-- Material editor -->
+    <string name="material_name">Nombre</string>
+    <string name="material_brand">Marca</string>
+    <string name="material_color">Color</string>
+    <string name="material_spool_weight">Peso del rollo (g)</string>
+    <string name="material_spool_price">Precio del rollo</string>
+    <string name="material_diameter">Diámetro (mm)</string>
+    <string name="material_density">Densidad (g/cm³)</string>
+    <string name="new_material">Nuevo material</string>
+    <string name="materials_empty">Agrega tu primer material</string>
+
+    <!-- Machine editor -->
+    <string name="machine_name">Nombre</string>
+    <string name="machine_model">Modelo</string>
+    <string name="machine_price">Costo de la máquina</string>
+    <string name="machine_lifespan">Vida útil (h)</string>
+    <string name="machine_power">Consumo eléctrico (W)</string>
+    <string name="machine_hour_cost">Costo hora recomendado</string>
+    <string name="machine_notes">Notas</string>
+    <string name="new_machine">Nueva impresora</string>
+    <string name="machines_empty">Registra tu primera impresora</string>
+
+    <!-- History -->
+    <string name="history_empty">Aún no tienes cotizaciones</string>
+    <string name="favorite">Favorita</string>
+
+    <!-- Settings -->
+    <string name="settings_account">Cuenta</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="not_signed_in">No has iniciado sesión</string>
+    <string name="confirm_sign_out">¿Cerrar sesión?</string>
+    <string name="confirm_sign_out_msg">Tus datos están respaldados en la nube. Vuelve a iniciar sesión para recuperarlos.</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_currency">Moneda</string>
+    <string name="settings_business">Empresa</string>
+    <string name="settings_defaults">Valores por defecto</string>
+    <string name="settings_electricity_cost">Costo electricidad (por kWh)</string>
+    <string name="settings_default_margin">Margen por defecto (%)</string>
+    <string name="settings_default_tax">IVA por defecto (%)</string>
+    <string name="settings_date_format">Formato de fecha</string>
+    <string name="business_name">Nombre del negocio</string>
+    <string name="business_phone">Teléfono</string>
+    <string name="business_email">Correo</string>
+    <string name="business_instagram">Instagram</string>
+    <string name="business_facebook">Facebook</string>
+    <string name="business_web">Página web</string>
+    <string name="business_address">Dirección</string>
+    <string name="business_logo">Logo del negocio</string>
+    <string name="pick_logo">Subir logo</string>
+
+    <!-- Quotation / PDF -->
+    <string name="quotation">Cotización</string>
+    <string name="quote_number">N° de cotización</string>
+    <string name="quote_date">Fecha</string>
+    <string name="quote_client">Cliente</string>
+    <string name="quote_footer">Gracias por confiar en nosotros</string>
+    <string name="saved">Guardado</string>
+    <string name="deleted">Eliminado</string>
+    <string name="duplicated">Duplicado</string>
+
+    <!-- Home redesign -->
+    <string name="greeting_morning">Buenos días</string>
+    <string name="greeting_afternoon">Buenas tardes</string>
+    <string name="greeting_evening">Buenas noches</string>
+    <string name="home_subtitle_empty">Comienza a cotizar tus impresiones 3D</string>
+    <string name="home_month_summary">%1$d cotizaciones este mes</string>
+    <string name="stat_quotes">Cotizaciones</string>
+    <string name="stat_income">Ingresos</string>
+    <string name="stat_material">Material usado</string>
+    <string name="stat_clients">Clientes</string>
+    <string name="primary_new_quote_desc">Calcula el precio de un nuevo trabajo</string>
+    <string name="primary_start">Comenzar</string>
+    <string name="menu_business">Empresa</string>
+    <string name="menu_business_desc">Tus datos y logo</string>
+    <string name="section_recent">Actividad reciente</string>
+    <string name="section_shortcuts">Accesos</string>
+    <string name="recent_empty">Aún no tienes cotizaciones</string>
+    <string name="create_first_quote">Crear primera cotización</string>
+    <string name="see_all">Ver todo</string>
+    <string name="status_saved">Guardada</string>
+    <string name="status_favorite">Favorita</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_quotes">Cotizaciones</string>
+    <string name="nav_materials">Materiales</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="section_management">Gestión</string>
+    <string name="last_quote">Última cotización</string>
+    <string name="view_details">Ver detalles</string>
+    <string name="label_total">Total</string>
+    <string name="time_just_now">Justo ahora</string>
+    <string name="time_minutes">Hace %1$d min</string>
+    <string name="time_hours">Hace %1$d h</string>
+    <string name="time_days">Hace %1$d d</string>
+    <string name="menu_clients">Clientes</string>
+    <string name="menu_clients_desc">Tu cartera de clientes</string>
+    <string name="new_client">Nuevo cliente</string>
+    <string name="clients_empty">Agrega tu primer cliente</string>
+    <string name="client_name">Nombre</string>
+
+    <!-- Onboarding -->
+    <string name="onb_welcome">Bienvenido</string>
+    <string name="onb_language_title">Elige tu idioma</string>
+    <string name="onb_language_sub">Podrás cambiarlo luego en Configuración</string>
+    <string name="onb_printer_title">¿Qué impresora utilizas?</string>
+    <string name="onb_printer_sub">La usaremos para calcular tus costos. Puedes agregar más después.</string>
+    <string name="onb_account_title">Crea tu cuenta</string>
+    <string name="onb_account_sub">Guarda tus datos y prepárate para sincronizar en la nube</string>
+    <string name="onb_account_name">Tu nombre</string>
+    <string name="onb_cloud_note">El inicio de sesión en la nube llegará pronto</string>
+    <string name="onb_next">Continuar</string>
+    <string name="onb_skip">Omitir</string>
+    <string name="onb_finish">Comenzar</string>
+    <string name="onb_back">Atrás</string>
+    <string name="onb_signin_title">Iniciar sesión</string>
+    <string name="onb_signin_sub">Recupera tus datos al reinstalar (sincronización en la nube próximamente)</string>
+    <string name="onb_have_account">¿Ya tienes cuenta? Iniciar sesión</string>
+    <string name="onb_no_account">¿Nuevo aquí? Crear cuenta</string>
+    <string name="onb_step_of">Paso %1$d de %2$d</string>
+    <string name="onb_currency_title">Elige tu moneda</string>
+    <string name="onb_currency_sub">Se usará para todos tus precios</string>
+    <string name="onb_lang_auto_desc">Usar el idioma del dispositivo</string>
+    <string name="onb_lang_auto">Automático</string>
+    <string name="onb_custom_printer">Nombre o modelo de tu impresora</string>
+    <!-- Language names shown in their own language (same in every locale). -->
+    <string name="lang_es" translatable="false">Español</string>
+    <string name="lang_es_desc" translatable="false">Español (Latinoamérica)</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_en_desc" translatable="false">English</string>
+    <string name="lang_pt" translatable="false">Português</string>
+    <string name="lang_pt_desc" translatable="false">Português (Brasil)</string>
+    <string name="onb_printer_not_found">No encuentro mi impresora</string>
+    <string name="other">Otro</string>
+    <string name="auth_required_title">Inicia sesión para exportar</string>
+    <string name="auth_required_msg">Necesitas una cuenta para exportar la cotización en PDF o imagen.</string>
+    <string name="paywall_title">Exportar PDF</string>
+    <string name="paywall_msg">Suscríbete por 1.500 CLP/mes para exportar sin anuncios, o mira un video para exportar esta vez.</string>
+    <string name="paywall_subscribe">Suscribirse</string>
+    <string name="paywall_watch_ad">Ver video</string>
+    <string name="settings_premium">Premium</string>
+    <string name="premium_title">Quitar anuncios</string>
+    <string name="premium_active">Suscripción activa</string>
+    <string name="premium_desc">Sin anuncios y logo de empresa en tus cotizaciones por 1.900 CLP/mes.</string>
+    <string name="logo_locked">Logo (Premium)</string>
+    <string name="pro_title">Hazte Pro</string>
+    <string name="pro_cta">Hazte Pro</string>
+    <string name="pro_price">%s / mes · cancela cuando quieras</string>
+    <string name="plan_monthly">Mensual</string>
+    <string name="plan_annual">Anual</string>
+    <string name="plan_annual_free">2 meses gratis</string>
+    <string name="per_month">%s / mes</string>
+    <string name="per_year">%s / año</string>
+    <string name="pro_benefit_noads">Sin anuncios</string>
+    <string name="pro_benefit_logo">Tu logo en las cotizaciones</string>
+    <string name="pro_benefit_watermark">PDF sin marca de agua</string>
+    <string name="pro_benefit_unlimited">Cotizaciones ilimitadas</string>
+    <string name="pro_benefit_support">Apoyas el desarrollo de la app</string>
+    <string name="pro_active">Eres Pro</string>
+    <string name="pro_active_desc">Gracias. Disfrutas la app sin anuncios y con tu logo.</string>
+    <string name="pdf_watermark">Generado con</string>
+    <string name="limit_title">Límite del plan gratis</string>
+    <string name="limit_msg">El plan gratis guarda hasta %d cotizaciones. Hazte Pro para guardar sin límite.</string>
+    <string name="guest_limit_title">Cotizaciones diarias agotadas</string>
+    <string name="guest_limit_msg">Sin sesión puedes hacer %d cotizaciones al día. Inicia sesión para cotizar sin límite.</string>
+    <string name="use_template">Usar plantilla</string>
+    <string name="save_as_template">Guardar como plantilla</string>
+    <string name="template_name">Nombre de la plantilla</string>
+    <string name="template_saved">Plantilla guardada</string>
+    <string name="template_limit_title">Plantillas del plan gratis</string>
+    <string name="template_limit_msg">El plan gratis guarda %d plantilla. Hazte Pro para plantillas ilimitadas.</string>
+    <string name="status_draft">Borrador</string>
+    <string name="status_sent">Enviada</string>
+    <string name="status_accepted">Aceptada</string>
+    <string name="status_rejected">Rechazada</string>
+    <string name="help_margin" formatted="false">Ganancia sobre el costo total. 50% significa vender al costo × 1.5.</string>
+    <string name="help_surcharge">Cargo extra sobre el precio final, por ejemplo por urgencia.</string>
+    <string name="help_failures">Porcentaje de impresiones que fallan y hay que rehacer. Sube el costo de material.</string>
+    <string name="help_waste">Material perdido en purgas, soportes y colada. Se suma al material usado.</string>
+    <string name="help_postprocess">Horas de trabajo manual tras imprimir: lijado, pintura, ensamblaje.</string>
+    <string name="help_manual_price">Fija el precio final a mano e ignora el cálculo automático.</string>
+    <string name="help_meters">Largo de filamento usado. Alternativa a los gramos.</string>
+    <string name="pdf_client_data">Datos del cliente</string>
+    <string name="pdf_cost_detail">Detalle de costos</string>
+    <string name="pdf_summary">Resumen</string>
+    <string name="pdf_time">Tiempo</string>
+    <string name="pdf_units">unidades</string>
+    <string name="pdf_concept">Concepto</string>
+    <string name="pdf_value">Valor</string>
+    <string name="pdf_print_time">Tiempo de impresión</string>
+    <string name="pdf_product">Producto</string>
+    <string name="add_material">Agregar material</string>
+    <string name="quote_saved">Cotización guardada</string>
+    <string name="settings_save">Guardar configuración</string>
+    <string name="settings_saved">Configuración guardada</string>
+    <string name="settings_save_confirm_title">¿Guardar cambios?</string>
+    <string name="settings_save_confirm_msg">Se actualizará la información de tu empresa en las cotizaciones.</string>
+    <string name="help">Ayuda</string>
+    <string name="auth_subtitle">Inicia sesión para generar cotizaciones</string>
+    <string name="auth_create_account">Crear cuenta</string>
+    <string name="auth_or">o</string>
+    <string name="auth_google">Continuar con Google</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_confirm_password">Confirmar contraseña</string>
+    <string name="auth_req_min">Mínimo 8 caracteres</string>
+    <string name="auth_req_upper">Una mayúscula</string>
+    <string name="auth_req_lower">Una minúscula</string>
+    <string name="auth_req_digit">Un número</string>
+    <string name="auth_info_confirm_email">Revisa tu correo para confirmar la cuenta</string>
+    <string name="auth_error_network">Sin conexión. Revisa tu internet.</string>
+    <string name="auth_error_email_taken">Ese correo ya está registrado</string>
+    <string name="auth_error_invalid_credentials">Correo o contraseña incorrectos</string>
+    <string name="auth_error_email_not_confirmed">Confirma tu correo antes de iniciar sesión</string>
+    <string name="auth_error_weak_password">La contraseña es muy corta</string>
+    <string name="auth_error_invalid_email">Correo inválido</string>
+    <string name="auth_error_empty_password">Ingresa tu contraseña</string>
+    <string name="auth_error_password_policy">La contraseña no cumple los requisitos</string>
+    <string name="auth_error_password_mismatch">Las contraseñas no coinciden</string>
+    <string name="auth_error_unknown">Ocurrió un error. Inténtalo de nuevo.</string>
+</resources>

@@ -1,0 +1,15 @@
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Secretos / firma release — nunca subir
+keystore.properties
+*.jks
+*.keystore
+
+# Config local de herramientas
+.claude/
