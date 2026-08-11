@@ -340,4 +340,15 @@
     <string name="auth_error_password_policy">La contraseña no cumple los requisitos</string>
     <string name="auth_error_password_mismatch">Las contraseñas no coinciden</string>
     <string name="auth_error_unknown">Ocurrió un error. Inténtalo de nuevo.</string>
+    <!-- Premium auth redesign -->
+    <string name="auth_brand_name">Cotiza 3D</string>
+    <string name="auth_brand_descriptor">CALCULADORA</string>
+    <string name="auth_logo_cd">Logo de Cotiza 3D</string>
+    <string name="auth_email_label">Correo electrónico</string>
+    <string name="auth_email_placeholder">correo@ejemplo.com</string>
+    <string name="auth_or_continue">o continúa con</string>
+    <string name="auth_all_good">Todo correcto</string>
+    <string name="auth_tagline_login">Calcula mejor.\nCotiza más rápido.\nImprime con ganancias.</string>
+    <string name="auth_tagline_signup">Todo lo que necesitas\npara calcular y vender.</string>
+    <string name="auth_tagline_caption">Más control. Más ganancias.</string>
 </resources>
