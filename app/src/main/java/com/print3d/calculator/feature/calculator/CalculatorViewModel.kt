@@ -80,19 +80,28 @@ class CalculatorViewModel @Inject constructor(
     /** Number of quotes already saved — used to enforce the free-tier cap. */
     suspend fun savedCount(): Int = quoteRepo.count()
 
+    /** Quotes saved this calendar month — enforces the free monthly cap. */
+    suspend fun savedThisMonth(): Int = quoteRepo.countThisMonth()
+
     suspend fun save(input: QuoteInput, result: QuoteResult, currencyCode: String, existingId: Long): Long {
-        val number = if (existingId > 0) {
-            quoteRepo.get(existingId)?.number ?: quoteRepo.nextNumber()
-        } else quoteRepo.nextNumber()
-        val quote = Quotation(
-            id = existingId.coerceAtLeast(0),
-            number = number,
-            createdAt = System.currentTimeMillis(),
-            input = input,
-            result = result,
-            currencyCode = currencyCode
-        )
+        val now = System.currentTimeMillis()
+        val existing = if (existingId > 0) quoteRepo.get(existingId) else null
+        val quote = if (existing != null) {
+            // Edit: preserve creation date, status and lifecycle; only refresh content + updatedAt.
+            existing.copy(input = input, result = result, currencyCode = currencyCode, updatedAt = now)
+        } else {
+            Quotation(
+                id = 0,
+                number = quoteRepo.nextNumber(),
+                createdAt = now,
+                input = input,
+                result = result,
+                currencyCode = currencyCode,
+                updatedAt = now
+            )
+        }
         val id = quoteRepo.save(quote)
+        if (existing == null) quoteRepo.logEvent(id, com.print3d.calculator.domain.model.QuoteStatus.DRAFT)
         // Keep the client directory in sync with quoted clients.
         clientRepo.ensureExists(input.clientName, input.clientPhone, input.clientEmail)
         return id

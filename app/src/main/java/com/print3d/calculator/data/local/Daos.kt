@@ -40,6 +40,9 @@ interface ClientDao {
     @Query("SELECT * FROM clients WHERE name = :name COLLATE NOCASE LIMIT 1")
     suspend fun getByName(name: String): ClientEntity?
 
+    @Query("SELECT * FROM clients WHERE id = :id")
+    suspend fun getById(id: Long): ClientEntity?
+
     @Query("SELECT * FROM clients")
     suspend fun getAllOnce(): List<ClientEntity>
 
@@ -101,6 +104,10 @@ interface QuotationDao {
     @Query("SELECT COUNT(*) FROM quotations")
     suspend fun count(): Int
 
+    /** Quotes created at or after [since] — used for the free monthly cap. */
+    @Query("SELECT COUNT(*) FROM quotations WHERE createdAt >= :since")
+    suspend fun countSince(since: Long): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: QuotationEntity): Long
 
@@ -115,6 +122,54 @@ interface QuotationDao {
 
     @Delete
     suspend fun delete(entity: QuotationEntity)
+}
+
+@Dao
+interface MaterialMovementDao {
+    @Query("SELECT * FROM material_movements ORDER BY timestamp DESC")
+    fun observeAll(): Flow<List<MaterialMovementEntity>>
+
+    @Query("SELECT * FROM material_movements WHERE materialId = :materialId ORDER BY timestamp DESC")
+    fun observeForMaterial(materialId: Long): Flow<List<MaterialMovementEntity>>
+
+    @Query("SELECT * FROM material_movements")
+    suspend fun getAllOnce(): List<MaterialMovementEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entity: MaterialMovementEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entities: List<MaterialMovementEntity>)
+
+    @Query("DELETE FROM material_movements")
+    suspend fun clearAll()
+
+    @Query("DELETE FROM material_movements WHERE materialId = :materialId")
+    suspend fun clearForMaterial(materialId: Long)
+}
+
+@Dao
+interface QuoteEventDao {
+    @Query("SELECT * FROM quote_events WHERE quotationId = :quotationId ORDER BY timestamp ASC")
+    fun observeForQuote(quotationId: Long): Flow<List<QuoteEventEntity>>
+
+    @Query("SELECT * FROM quote_events")
+    fun observeAll(): Flow<List<QuoteEventEntity>>
+
+    @Query("SELECT * FROM quote_events")
+    suspend fun getAllOnce(): List<QuoteEventEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entity: QuoteEventEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entities: List<QuoteEventEntity>)
+
+    @Query("DELETE FROM quote_events")
+    suspend fun clearAll()
+
+    @Query("DELETE FROM quote_events WHERE quotationId = :quotationId")
+    suspend fun clearForQuote(quotationId: Long)
 }
 
 @Dao

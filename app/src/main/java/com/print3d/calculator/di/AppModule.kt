@@ -6,7 +6,9 @@ import com.print3d.calculator.data.local.AppDatabase
 import com.print3d.calculator.data.local.ClientDao
 import com.print3d.calculator.data.local.MachineDao
 import com.print3d.calculator.data.local.MaterialDao
+import com.print3d.calculator.data.local.MaterialMovementDao
 import com.print3d.calculator.data.local.QuotationDao
+import com.print3d.calculator.data.local.QuoteEventDao
 import com.print3d.calculator.data.local.TemplateDao
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,10 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6
+            )
             .fallbackToDestructiveMigration()
             .build()
 
@@ -41,4 +46,10 @@ object AppModule {
 
     @Provides
     fun provideTemplateDao(db: AppDatabase): TemplateDao = db.templateDao()
+
+    @Provides
+    fun provideMaterialMovementDao(db: AppDatabase): MaterialMovementDao = db.materialMovementDao()
+
+    @Provides
+    fun provideQuoteEventDao(db: AppDatabase): QuoteEventDao = db.quoteEventDao()
 }

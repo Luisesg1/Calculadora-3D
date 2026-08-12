@@ -6,8 +6,12 @@ import com.print3d.calculator.data.local.MachineDao
 import com.print3d.calculator.data.local.MachineEntity
 import com.print3d.calculator.data.local.MaterialDao
 import com.print3d.calculator.data.local.MaterialEntity
+import com.print3d.calculator.data.local.MaterialMovementDao
+import com.print3d.calculator.data.local.MaterialMovementEntity
 import com.print3d.calculator.data.local.QuotationDao
 import com.print3d.calculator.data.local.QuotationEntity
+import com.print3d.calculator.data.local.QuoteEventDao
+import com.print3d.calculator.data.local.QuoteEventEntity
 import com.print3d.calculator.data.local.TemplateDao
 import com.print3d.calculator.data.local.TemplateEntity
 import com.print3d.calculator.data.repo.AppJson
@@ -32,7 +36,9 @@ data class BackupData(
     val machines: List<MachineEntity> = emptyList(),
     val clients: List<ClientEntity> = emptyList(),
     val quotations: List<QuotationEntity> = emptyList(),
-    val templates: List<TemplateEntity> = emptyList()
+    val templates: List<TemplateEntity> = emptyList(),
+    val movements: List<MaterialMovementEntity> = emptyList(),
+    val quoteEvents: List<QuoteEventEntity> = emptyList()
 )
 
 /** Row in the Supabase `user_backups` table. One per user, keyed by user_id. */
@@ -59,7 +65,9 @@ class CloudSync @Inject constructor(
     private val machineDao: MachineDao,
     private val clientDao: ClientDao,
     private val quotationDao: QuotationDao,
-    private val templateDao: TemplateDao
+    private val templateDao: TemplateDao,
+    private val movementDao: MaterialMovementDao,
+    private val quoteEventDao: QuoteEventDao
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -74,12 +82,16 @@ class CloudSync @Inject constructor(
     private fun observeLocalChanges() {
         scope.launch {
             combine(
-                materialDao.observeAll(),
-                machineDao.observeAll(),
-                clientDao.observeAll(),
-                quotationDao.observeAll(),
-                templateDao.observeAll()
-            ) { _, _, _, _, _ -> Unit }
+                listOf(
+                    materialDao.observeAll(),
+                    machineDao.observeAll(),
+                    clientDao.observeAll(),
+                    quotationDao.observeAll(),
+                    templateDao.observeAll(),
+                    movementDao.observeAll(),
+                    quoteEventDao.observeAll()
+                )
+            ) { }
                 .drop(1) // skip the initial load emission at app start
                 .debounce(2500)
                 .collect {
@@ -99,7 +111,9 @@ class CloudSync @Inject constructor(
             machines = machineDao.getAllOnce(),
             clients = clientDao.getAllOnce(),
             quotations = quotationDao.getAllOnce(),
-            templates = templateDao.getAllOnce()
+            templates = templateDao.getAllOnce(),
+            movements = movementDao.getAllOnce(),
+            quoteEvents = quoteEventDao.getAllOnce()
         )
         val payload = AppJson.encodeToString(BackupData.serializer(), data)
         return runCatching { postgrest.from("user_backups").upsert(BackupRow(uid, payload)) }.isSuccess
@@ -117,6 +131,8 @@ class CloudSync @Inject constructor(
         clientDao.clearAll()
         quotationDao.clearAll()
         templateDao.clearAll()
+        movementDao.clearAll()
+        quoteEventDao.clearAll()
     }
 
     /**
@@ -142,5 +158,7 @@ class CloudSync @Inject constructor(
         clientDao.clearAll(); clientDao.insertAll(data.clients)
         quotationDao.clearAll(); quotationDao.insertAll(data.quotations)
         templateDao.clearAll(); templateDao.insertAll(data.templates)
+        movementDao.clearAll(); movementDao.insertAll(data.movements)
+        quoteEventDao.clearAll(); quoteEventDao.insertAll(data.quoteEvents)
     }
 }

@@ -63,12 +63,44 @@ enum class AppLanguage(val tag: String) {
 
 enum class AppThemeMode { SYSTEM, LIGHT, DARK }
 
-/** Lifecycle of a quote, so the app works as a light CRM (draft → sent → accepted/rejected). */
+/**
+ * Lifecycle of a quote, so the app works as a light CRM.
+ * Happy path: draft → sent → viewed → accepted → in production → delivered.
+ * Off-ramps: rejected, cancelled.
+ */
 enum class QuoteStatus {
-    DRAFT, SENT, ACCEPTED, REJECTED;
+    DRAFT, SENT, VIEWED, ACCEPTED, IN_PRODUCTION, DELIVERED, REJECTED, CANCELLED;
+
+    /** Terminal states — no further automatic progression. */
+    val isTerminal: Boolean get() = this == DELIVERED || this == REJECTED || this == CANCELLED
+
+    /** Next stage in the happy-path flow, or null if there is none. */
+    fun next(): QuoteStatus? {
+        val i = KANBAN_FLOW.indexOf(this)
+        return if (i >= 0 && i < KANBAN_FLOW.lastIndex) KANBAN_FLOW[i + 1] else null
+    }
 
     companion object {
+        /** The forward pipeline used by the Kanban board (excludes the off-ramp states). */
+        val KANBAN_FLOW = listOf(DRAFT, SENT, VIEWED, ACCEPTED, IN_PRODUCTION, DELIVERED)
+
         fun fromName(name: String?): QuoteStatus =
             entries.firstOrNull { it.name == name } ?: DRAFT
     }
 }
+
+/** How close a quote is to (or past) its due date. Derived from dueDate — never persisted. */
+enum class DueState { NONE, VALID, DUE_SOON, OVERDUE }
+
+/** Reason a material's stock changed. Drives the movement log. */
+enum class MovementReason {
+    PURCHASE, CONSUMPTION, CORRECTION, WASTE, RETURN, MANUAL;
+
+    companion object {
+        fun fromName(name: String?): MovementReason =
+            entries.firstOrNull { it.name == name } ?: MANUAL
+    }
+}
+
+/** Stock health of a material relative to its minimum. */
+enum class StockStatus { OK, LOW, OUT }

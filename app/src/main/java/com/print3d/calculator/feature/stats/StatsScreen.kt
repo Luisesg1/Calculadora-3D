@@ -48,11 +48,14 @@ import kotlin.math.max
 @Composable
 fun StatsScreen(
     onBack: () -> Unit,
-    vm: StatsViewModel = hiltViewModel()
+    vm: StatsViewModel = hiltViewModel(),
+    monetization: com.print3d.calculator.feature.monetization.MonetizationViewModel = hiltViewModel()
 ) {
     val ui by vm.state.collectAsStateWithLifecycle()
+    val isPro by monetization.isSubscribed.collectAsStateWithLifecycle()
     val currency = ui.settings.currency
     fun money(v: Double) = CurrencyFormatter.format(v, currency)
+    fun pct(v: Double) = "${"%.0f".format(v)}%"
 
     Scaffold(
         topBar = {
@@ -111,6 +114,66 @@ fun StatsScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     StatBox(Modifier.weight(1f), stringResource(R.string.stats_quotes), ui.data.quotes.toString())
                     StatBox(Modifier.weight(1f), stringResource(R.string.stats_avg), money(ui.data.avgTicket))
+                }
+            }
+
+            // CRM funnel + inventory (advanced = Pro).
+            item {
+                Text(stringResource(R.string.stats_crm_title), style = MaterialTheme.typography.titleMedium)
+            }
+            if (isPro) {
+                val d = ui.data
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_created), d.created.toString())
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_conversion), pct(d.conversionRate))
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_accepted), d.accepted.toString())
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_rejected), d.rejected.toString())
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_pending), d.pending.toString())
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_in_production), d.inProduction.toString())
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_overdue), d.overdue.toString())
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_sales), money(d.salesFromQuotes))
+                    }
+                }
+                item { Text(stringResource(R.string.stats_inventory_title), style = MaterialTheme.typography.titleMedium) }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_most_used), d.mostUsedMaterial ?: "—")
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_top_consumption), d.topConsumptionMaterial ?: "—")
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_consumed_cost), money(d.materialsConsumedCost))
+                        StatBox(Modifier.weight(1f), stringResource(R.string.stats_quote_profit), money(d.profitFromQuotes))
+                    }
+                }
+            } else {
+                item {
+                    Surface(
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            stringResource(R.string.stats_pro_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
                 }
             }
 

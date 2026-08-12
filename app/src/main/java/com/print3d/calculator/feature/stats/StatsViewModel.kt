@@ -2,10 +2,17 @@ package com.print3d.calculator.feature.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.print3d.calculator.data.repo.MaterialMovementRepository
+import com.print3d.calculator.data.repo.MaterialRepository
 import com.print3d.calculator.data.repo.QuotationRepository
 import com.print3d.calculator.data.settings.AppSettings
 import com.print3d.calculator.data.settings.SettingsRepository
+import com.print3d.calculator.domain.model.DueState
+import com.print3d.calculator.domain.model.Material
+import com.print3d.calculator.domain.model.MaterialMovement
+import com.print3d.calculator.domain.model.MovementReason
 import com.print3d.calculator.domain.model.Quotation
+import com.print3d.calculator.domain.model.QuoteStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +32,21 @@ data class StatsData(
     val profit: Double = 0.0,
     val quotes: Int = 0,
     val avgTicket: Double = 0.0,
-    val months: List<MonthBucket> = emptyList()
+    val months: List<MonthBucket> = emptyList(),
+    // CRM metrics.
+    val created: Int = 0,
+    val accepted: Int = 0,
+    val rejected: Int = 0,
+    val pending: Int = 0,
+    val inProduction: Int = 0,
+    val overdue: Int = 0,
+    val conversionRate: Double = 0.0,
+    val salesFromQuotes: Double = 0.0,
+    val profitFromQuotes: Double = 0.0,
+    // Inventory metrics.
+    val mostUsedMaterial: String? = null,
+    val topConsumptionMaterial: String? = null,
+    val materialsConsumedCost: Double = 0.0
 )
 
 data class StatsUiState(
@@ -37,6 +58,8 @@ data class StatsUiState(
 @HiltViewModel
 class StatsViewModel @Inject constructor(
     quoteRepo: QuotationRepository,
+    materialRepo: MaterialRepository,
+    movementRepo: MaterialMovementRepository,
     settingsRepo: SettingsRepository
 ) : ViewModel() {
 
@@ -44,8 +67,8 @@ class StatsViewModel @Inject constructor(
     fun setRange(r: StatsRange) { range.value = r }
 
     val state: StateFlow<StatsUiState> =
-        combine(quoteRepo.all, settingsRepo.settings, range) { quotes, settings, r ->
-            StatsUiState(settings = settings, range = r, data = compute(quotes, r))
+        combine(quoteRepo.all, materialRepo.all, movementRepo.all, settingsRepo.settings, range) { quotes, materials, movements, settings, r ->
+            StatsUiState(settings = settings, range = r, data = compute(quotes, r, materials, movements))
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StatsUiState())
 
     private fun rangeStart(r: StatsRange): Long {
@@ -62,13 +85,43 @@ class StatsViewModel @Inject constructor(
         return c.timeInMillis
     }
 
-    private fun compute(all: List<Quotation>, r: StatsRange): StatsData {
+    private fun compute(all: List<Quotation>, r: StatsRange, materials: List<Material>, movements: List<MaterialMovement>): StatsData {
         val start = rangeStart(r)
         val quotes = all.filter { it.createdAt >= start }
-        if (quotes.isEmpty()) return StatsData()
+        val byId = materials.associateBy { it.id }
+
+        // Inventory consumption in range (from the movement ledger).
+        val consumption = movements.filter { it.reason == MovementReason.CONSUMPTION && it.timestamp >= start }
+        val gramsByMaterial = consumption.groupBy { it.materialId }.mapValues { (_, list) -> list.sumOf { -it.delta } }
+        val topConsumptionId = gramsByMaterial.maxByOrNull { it.value }?.key
+        val consumedCost = gramsByMaterial.entries.sumOf { (id, g) -> g * (byId[id]?.pricePerGram ?: 0.0) }
+
+        // Most-used material by how many quotes reference it.
+        val usageCount = quotes.flatMap { it.input.effectiveMaterialLines.mapNotNull { l -> l.materialId } }
+            .groupingBy { it }.eachCount()
+        val mostUsedId = usageCount.maxByOrNull { it.value }?.key
+
+        if (quotes.isEmpty()) {
+            return StatsData(
+                mostUsedMaterial = mostUsedId?.let { byId[it]?.displayLabel },
+                topConsumptionMaterial = topConsumptionId?.let { byId[it]?.displayLabel },
+                materialsConsumedCost = consumedCost
+            )
+        }
+
         val income = quotes.sumOf { it.result.total }
         val costs = quotes.sumOf { it.result.productionCost }
         val profit = income - costs
+
+        val won = quotes.filter {
+            it.status == QuoteStatus.ACCEPTED || it.status == QuoteStatus.IN_PRODUCTION || it.status == QuoteStatus.DELIVERED
+        }
+        val accepted = won.size
+        val rejected = quotes.count { it.status == QuoteStatus.REJECTED }
+        val pending = quotes.count { it.status == QuoteStatus.DRAFT || it.status == QuoteStatus.SENT || it.status == QuoteStatus.VIEWED }
+        val inProduction = quotes.count { it.status == QuoteStatus.IN_PRODUCTION }
+        val overdue = quotes.count { !it.status.isTerminal && it.dueState() == DueState.OVERDUE }
+        val conversion = if (quotes.isNotEmpty()) accepted.toDouble() / quotes.size * 100.0 else 0.0
 
         val monthFmt = java.text.SimpleDateFormat("MMM", java.util.Locale.getDefault())
         val buckets = quotes.groupBy {
@@ -90,7 +143,19 @@ class StatsViewModel @Inject constructor(
             profit = profit,
             quotes = quotes.size,
             avgTicket = income / quotes.size,
-            months = buckets
+            months = buckets,
+            created = quotes.size,
+            accepted = accepted,
+            rejected = rejected,
+            pending = pending,
+            inProduction = inProduction,
+            overdue = overdue,
+            conversionRate = conversion,
+            salesFromQuotes = won.sumOf { it.result.total },
+            profitFromQuotes = won.sumOf { it.result.profit },
+            mostUsedMaterial = mostUsedId?.let { byId[it]?.displayLabel },
+            topConsumptionMaterial = topConsumptionId?.let { byId[it]?.displayLabel },
+            materialsConsumedCost = consumedCost
         )
     }
 }

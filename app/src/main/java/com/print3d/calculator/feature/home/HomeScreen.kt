@@ -2,6 +2,7 @@ package com.print3d.calculator.feature.home
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.print3d.calculator.R
+import com.print3d.calculator.core.util.CurrencyFormatter
+import com.print3d.calculator.domain.model.AppCurrency
+import com.print3d.calculator.ui.components.AppCard
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -92,8 +96,21 @@ fun HomeScreen(
             }
         }
 
+        if (ui.stats.quotesCount > 0 || ui.stats.lowStockCount > 0) {
+            item {
+                Stagger(2) {
+                    BusinessDashboard(
+                        stats = ui.stats,
+                        currency = ui.settings.currency,
+                        onQuotes = { onNavigate("history") },
+                        onInventory = { onNavigate("materials") }
+                    )
+                }
+            }
+        }
+
         item {
-            Stagger(2) {
+            Stagger(3) {
                 PrimaryQuoteCard(
                     title = stringResource(R.string.menu_new_quote),
                     desc = stringResource(R.string.primary_new_quote_desc),
@@ -241,6 +258,62 @@ private fun Stagger(index: Int, content: @Composable () -> Unit) {
             translationY = (1f - progress) * 26.dp.toPx()
         }
     ) { content() }
+}
+
+/** Compact business snapshot: open quotes, production, low stock, and this month's money. */
+@Composable
+private fun BusinessDashboard(
+    stats: HomeStats,
+    currency: AppCurrency,
+    onQuotes: () -> Unit,
+    onInventory: () -> Unit
+) {
+    AppCard {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                MiniStat(stats.pendingQuotes.toString(), stringResource(R.string.stats_pending),
+                    MaterialTheme.colorScheme.primary, Modifier.weight(1f), onQuotes)
+                MiniStat(stats.inProduction.toString(), stringResource(R.string.stats_in_production),
+                    MaterialTheme.colorScheme.secondary, Modifier.weight(1f), onQuotes)
+                MiniStat(stats.lowStockCount.toString(), stringResource(R.string.home_low_stock),
+                    if (stats.lowStockCount > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    Modifier.weight(1f), onInventory)
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(stringResource(R.string.date_month), style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(CurrencyFormatter.format(stats.incomeThisMonth, currency),
+                        style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(stringResource(R.string.quote_profit), style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(CurrencyFormatter.format(stats.profitThisMonth, currency),
+                        style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MiniStat(
+    value: String,
+    label: String,
+    color: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(end = 4.dp)
+    ) {
+        Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = color)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
 }
 
 private data class Tile(
