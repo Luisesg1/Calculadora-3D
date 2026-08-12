@@ -68,6 +68,8 @@ fun AppNavGraph(
     fun openCalculator(quoteId: Long) {
         nav.navigate(Routes.calculator(quoteId))
     }
+    fun openQuoteDetail(quoteId: Long) { nav.navigate(Routes.quoteDetail(quoteId)) }
+    fun openClientDetail(clientId: Long) { nav.navigate(Routes.clientDetail(clientId)) }
 
     val items = listOf(
         NavItem(Routes.HOME, R.string.nav_home, Icons.Rounded.Home),
@@ -107,7 +109,7 @@ fun AppNavGraph(
             composable(Routes.HOME) {
                 HomeScreen(
                     onNewQuote = { openCalculator(-1L) },
-                    onOpenQuote = { id -> openCalculator(id) },
+                    onOpenQuote = { id -> openQuoteDetail(id) },
                     onNavigate = { route ->
                         if (route in Routes.TOP_LEVEL) navigateTab(nav, route) else nav.navigate(route)
                     },
@@ -135,12 +137,36 @@ fun AppNavGraph(
             composable(Routes.HISTORY) {
                 HistoryScreen(
                     onBack = { nav.popBackStack() },
-                    onOpen = { id -> openCalculator(id) }
+                    onOpen = { id -> openQuoteDetail(id) }
+                )
+            }
+            composable(
+                route = Routes.QUOTE_DETAIL,
+                arguments = listOf(navArgument("quoteId") { type = NavType.LongType })
+            ) {
+                com.print3d.calculator.feature.quotedetail.QuoteDetailScreen(
+                    onBack = { nav.popBackStack() },
+                    onEdit = { id -> openCalculator(id) },
+                    onOpenClient = { id -> openClientDetail(id) }
+                )
+            }
+            composable(
+                route = Routes.CLIENT_DETAIL,
+                arguments = listOf(navArgument("clientId") { type = NavType.LongType })
+            ) {
+                com.print3d.calculator.feature.clientdetail.ClientDetailScreen(
+                    onBack = { nav.popBackStack() },
+                    onOpenQuote = { id -> openQuoteDetail(id) }
                 )
             }
             composable(Routes.MATERIALS) { MaterialsScreen(onBack = { nav.popBackStack() }) }
             composable(Routes.MACHINES) { MachinesScreen(onBack = { nav.popBackStack() }) }
-            composable(Routes.CLIENTS) { ClientsScreen(onBack = { nav.popBackStack() }) }
+            composable(Routes.CLIENTS) {
+                ClientsScreen(
+                    onBack = { nav.popBackStack() },
+                    onOpenClient = { id -> openClientDetail(id) }
+                )
+            }
             composable(Routes.STATS) { StatsScreen(onBack = { nav.popBackStack() }) }
             composable(Routes.SETTINGS) {
                 SettingsScreen(

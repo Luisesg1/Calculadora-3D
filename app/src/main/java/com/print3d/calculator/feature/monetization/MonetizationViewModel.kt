@@ -50,8 +50,11 @@ class MonetizationViewModel @Inject constructor(
         /** Show a full-screen ad once every this many screen views. */
         const val SCREENS_PER_AD = 5
 
-        /** Free users can save at most this many quotes; Pro is unlimited. */
-        const val FREE_QUOTE_LIMIT = 10
+        /** Free users can save at most this many quotes per calendar month; Pro is unlimited. */
+        const val FREE_QUOTES_PER_MONTH = 15
+
+        /** Free users can keep at most this many materials; Pro is unlimited. */
+        const val FREE_MATERIAL_LIMIT = 5
 
         /** Free users can save at most this many templates; Pro is unlimited. */
         const val FREE_TEMPLATE_LIMIT = 1

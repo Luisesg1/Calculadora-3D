@@ -53,6 +53,7 @@ import com.print3d.calculator.ui.components.EmptyState
 @Composable
 fun ClientsScreen(
     onBack: () -> Unit,
+    onOpenClient: (Long) -> Unit = {},
     vm: ClientsViewModel = hiltViewModel()
 ) {
     val clients by vm.clients.collectAsStateWithLifecycle()
@@ -91,7 +92,7 @@ fun ClientsScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(clients, key = { it.id }) { c ->
-                    AppCard(modifier = Modifier.animateItem(), onClick = { editing = c; showEditor = true }) {
+                    AppCard(modifier = Modifier.animateItem(), onClick = { onOpenClient(c.id) }) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
                                 Text(c.name, style = MaterialTheme.typography.titleMedium)
@@ -118,6 +119,7 @@ fun ClientsScreen(
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val initial = editing
         var name by remember { mutableStateOf(initial?.name ?: "") }
+        var rut by remember { mutableStateOf(initial?.rut ?: "") }
         var phone by remember { mutableStateOf(initial?.phone ?: "") }
         var email by remember { mutableStateOf(initial?.email ?: "") }
         var address by remember { mutableStateOf(initial?.address ?: "") }
@@ -133,6 +135,7 @@ fun ClientsScreen(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 AppTextField(name, { name = it }, stringResource(R.string.client_name), required = true)
+                AppTextField(rut, { rut = it }, stringResource(R.string.client_rut))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     AppTextField(phone, { phone = it }, stringResource(R.string.business_phone), Modifier.weight(1f))
                     AppTextField(email, { email = it }, stringResource(R.string.business_email), Modifier.weight(1f))
@@ -145,6 +148,7 @@ fun ClientsScreen(
                             Client(
                                 id = initial?.id ?: 0,
                                 name = name.trim().ifBlank { "Cliente" },
+                                rut = rut.trim(),
                                 phone = phone.trim(),
                                 email = email.trim(),
                                 address = address.trim(),

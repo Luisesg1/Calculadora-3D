@@ -388,7 +388,7 @@ fun CalculatorScreen(
                                 // Free tier caps saved quotes; editing an existing one is always allowed.
                                 val isNew = loadedId <= 0L
                                 if (isNew && !isSubscribed &&
-                                    vm.savedCount() >= com.print3d.calculator.feature.monetization.MonetizationViewModel.FREE_QUOTE_LIMIT) {
+                                    vm.savedThisMonth() >= com.print3d.calculator.feature.monetization.MonetizationViewModel.FREE_QUOTES_PER_MONTH) {
                                     showLimitUpsell = true
                                     return@launch
                                 }
@@ -448,7 +448,7 @@ fun CalculatorScreen(
         val activity = com.print3d.calculator.feature.monetization.findActivity(context)
         // Resolve strings in this composition — a Dialog sub-composition ignores the in-app locale.
         val limitTitle = stringResource(R.string.limit_title)
-        val limitBody = stringResource(R.string.limit_msg, com.print3d.calculator.feature.monetization.MonetizationViewModel.FREE_QUOTE_LIMIT)
+        val limitBody = stringResource(R.string.limit_msg, com.print3d.calculator.feature.monetization.MonetizationViewModel.FREE_QUOTES_PER_MONTH)
         val proCta = stringResource(R.string.pro_cta)
         val cancelTxt = stringResource(R.string.cancel)
         androidx.compose.material3.AlertDialog(

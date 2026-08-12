@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 data class Client(
     val id: Long = 0,
     val name: String,
+    val rut: String = "",
     val phone: String = "",
     val email: String = "",
     val address: String = "",
@@ -19,7 +20,12 @@ data class Material(
     val spoolWeightG: Double = 1000.0,
     val spoolPrice: Double = 0.0,
     val diameterMm: Double = 1.75,
-    val densityG: Double? = null
+    val densityG: Double? = null,
+    /** Grams remaining on the spool. Defaults to the full spool for new/legacy materials. */
+    val currentWeightG: Double = spoolWeightG,
+    /** Low-stock threshold in grams; 0 disables the alert. */
+    val minStockG: Double = 0.0,
+    val purchaseDate: Long? = null
 ) {
     /** Price of a single gram of filament. */
     val pricePerGram: Double
@@ -28,6 +34,17 @@ data class Material(
     /** Name with color appended when set, e.g. "PLA+ · Negro" — disambiguates same-name spools. */
     val displayLabel: String
         get() = if (color.isBlank()) name else "$name · $color"
+
+    /** Remaining stock as a fraction of the initial spool weight, clamped to 0..1. */
+    val stockPct: Double
+        get() = if (spoolWeightG > 0) (currentWeightG / spoolWeightG).coerceIn(0.0, 1.0) else 0.0
+
+    val stockStatus: StockStatus
+        get() = when {
+            currentWeightG <= 0.0 -> StockStatus.OUT
+            minStockG > 0.0 && currentWeightG <= minStockG -> StockStatus.LOW
+            else -> StockStatus.OK
+        }
 }
 
 data class Machine(
@@ -136,7 +153,53 @@ data class Quotation(
     val result: QuoteResult,
     val currencyCode: String,
     val isFavorite: Boolean = false,
-    val status: QuoteStatus = QuoteStatus.DRAFT
+    val status: QuoteStatus = QuoteStatus.DRAFT,
+    /** Last time the quote was edited or its status changed. Defaults to createdAt. */
+    val updatedAt: Long = createdAt,
+    /** Optional expiry date (millis). Only drives the [dueState] badge; never mutates [status]. */
+    val dueDate: Long? = null,
+    /** True once production consumed material from inventory — guards against double deduction. */
+    val stockDeducted: Boolean = false,
+    // Lifecycle timestamps (millis), set when the quote first reaches each state.
+    val sentAt: Long? = null,
+    val viewedAt: Long? = null,
+    val acceptedAt: Long? = null,
+    val rejectedAt: Long? = null,
+    val productionStartedAt: Long? = null,
+    val deliveredAt: Long? = null
+) {
+    /** Vencimiento derivado — "por vencer" a 3 días o menos. Nunca cambia el estado. */
+    fun dueState(now: Long = System.currentTimeMillis()): DueState {
+        val d = dueDate ?: return DueState.NONE
+        val daysLeft = (d - now) / 86_400_000.0
+        return when {
+            daysLeft < 0 -> DueState.OVERDUE
+            daysLeft <= 3 -> DueState.DUE_SOON
+            else -> DueState.VALID
+        }
+    }
+}
+
+/** One entry in a material's stock ledger. */
+data class MaterialMovement(
+    val id: Long = 0,
+    val materialId: Long,
+    val delta: Double,
+    val reason: MovementReason,
+    val previousWeightG: Double,
+    val newWeightG: Double,
+    val timestamp: Long,
+    val note: String = "",
+    val quotationId: Long? = null
+)
+
+/** One status change in a quote's lifecycle — the CRM audit trail. */
+data class QuoteEvent(
+    val id: Long = 0,
+    val quotationId: Long,
+    val status: QuoteStatus,
+    val timestamp: Long,
+    val note: String = ""
 )
 
 /** A reusable, named preset of quote inputs — Pro feature (free tier gets one). */

@@ -83,9 +83,11 @@ fun ProUpsellCard(
             if (!isSubscribed) {
                 Spacer(Modifier.height(14.dp))
                 Benefit(stringResource(R.string.pro_benefit_noads))
+                Benefit(stringResource(R.string.pro_benefit_unlimited))
+                Benefit(stringResource(R.string.pro_benefit_inventory))
+                Benefit(stringResource(R.string.pro_benefit_crm))
                 Benefit(stringResource(R.string.pro_benefit_logo))
                 Benefit(stringResource(R.string.pro_benefit_watermark))
-                Benefit(stringResource(R.string.pro_benefit_unlimited))
                 Benefit(stringResource(R.string.pro_benefit_support))
                 Spacer(Modifier.height(16.dp))
 

@@ -45,6 +45,9 @@ fun MaterialEditorSheet(
     var price by remember { mutableStateOf(initial?.spoolPrice?.clean() ?: "") }
     var diameter by remember { mutableStateOf(initial?.diameterMm?.clean() ?: "1.75") }
     var density by remember { mutableStateOf(initial?.densityG?.clean() ?: "") }
+    // New material starts full; editing preserves the current remaining stock.
+    var current by remember { mutableStateOf((initial?.currentWeightG ?: initial?.spoolWeightG)?.clean() ?: "1000") }
+    var minStock by remember { mutableStateOf(initial?.minStockG?.clean() ?: "0") }
 
     // The sheet renders in its own window that ignores the in-app locale override — re-provide
     // the localized context/config captured here (call site is localized) so strings stay translated.
@@ -83,18 +86,26 @@ fun MaterialEditorSheet(
                 AppTextField(diameter, { diameter = it }, stringResource(R.string.material_diameter), Modifier.weight(1f), numeric = true)
                 AppTextField(density, { density = it }, stringResource(R.string.material_density) + " (${stringResource(R.string.optional)})", Modifier.weight(1f), numeric = true)
             }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AppTextField(current, { current = it }, stringResource(R.string.stock_current), Modifier.weight(1f), numeric = true)
+                AppTextField(minStock, { minStock = it }, stringResource(R.string.stock_min), Modifier.weight(1f), numeric = true)
+            }
             Button(
                 onClick = {
+                    val spool = weight.toDoubleOrNull() ?: 1000.0
                     onSave(
                         Material(
                             id = initial?.id ?: 0,
                             name = name.trim(),
                             brand = brand.trim(),
                             color = color.trim(),
-                            spoolWeightG = weight.toDoubleOrNull() ?: 1000.0,
+                            spoolWeightG = spool,
                             spoolPrice = price.toDoubleOrNull() ?: 0.0,
                             diameterMm = diameter.toDoubleOrNull() ?: 1.75,
-                            densityG = density.toDoubleOrNull()
+                            densityG = density.toDoubleOrNull(),
+                            currentWeightG = current.toDoubleOrNull() ?: spool,
+                            minStockG = minStock.toDoubleOrNull() ?: 0.0,
+                            purchaseDate = initial?.purchaseDate ?: System.currentTimeMillis()
                         )
                     )
                 },
