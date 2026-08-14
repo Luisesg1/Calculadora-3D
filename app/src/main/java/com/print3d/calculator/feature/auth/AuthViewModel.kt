@@ -85,6 +85,11 @@ class AuthViewModel @Inject constructor(
             } catch (e: GoogleSignInCancelled) {
                 _ui.update { it.copy(loading = false) } // user backed out — no error banner
             } catch (e: Exception) {
+                // Log the real cause: a silent Google loop is almost always a config problem
+                // (Play App Signing SHA-1/-256 missing from the Google Cloud OAuth client, or a
+                // wrong web client id) rather than a code bug. This makes it visible in logcat /
+                // Play pre-launch reports instead of failing silently.
+                android.util.Log.e("GoogleSignIn", "Credential Manager sign-in failed", e)
                 _ui.update { it.copy(loading = false, error = AuthError.UNKNOWN) }
             }
         }
