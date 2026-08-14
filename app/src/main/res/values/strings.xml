@@ -415,4 +415,18 @@
     <string name="auth_tagline_login">Calcula mejor.\nCotiza más rápido.\nImprime con ganancias.</string>
     <string name="auth_tagline_signup">Todo lo que necesitas\npara calcular y vender.</string>
     <string name="auth_tagline_caption">Más control. Más ganancias.</string>
+
+    <!-- Low-stock notifications -->
+    <string name="notif_channel_stock_name">Stock bajo</string>
+    <string name="notif_channel_stock_desc">Avisos cuando un material baja o se agota</string>
+    <string name="notif_low_stock_title">Stock bajo</string>
+    <string name="notif_low_stock_text" formatted="false">%1$s: quedan %2$s g</string>
+    <string name="notif_out_stock_title">Material agotado</string>
+    <string name="notif_out_stock_text" formatted="false">%1$s se agotó</string>
+
+    <!-- Stats: top clients + income/costs -->
+    <string name="stats_top_clients">Top clientes</string>
+    <string name="stats_no_clients">Sin clientes en este rango</string>
+    <string name="stats_client_quotes" formatted="false">%1$d cotizaciones</string>
+    <string name="stats_income_vs_costs">Ingresos vs costos</string>
 </resources>

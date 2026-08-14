@@ -16,6 +16,8 @@ import com.print3d.calculator.domain.model.Quotation
 import com.print3d.calculator.domain.model.QuoteEvent
 import com.print3d.calculator.domain.model.QuoteStatus
 import com.print3d.calculator.domain.model.QuoteTemplate
+import com.print3d.calculator.domain.model.StockStatus
+import com.print3d.calculator.data.notify.StockNotifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
@@ -146,8 +148,23 @@ class MaterialMovementRepository @Inject constructor(private val dao: MaterialMo
 @Singleton
 class InventoryManager @Inject constructor(
     private val materialDao: MaterialDao,
-    private val movementDao: MaterialMovementDao
+    private val movementDao: MaterialMovementDao,
+    private val stockNotifier: StockNotifier
 ) {
+    /** Stock bucket for a raw weight/threshold pair — mirrors [Material.stockStatus] on the entity. */
+    private fun statusOf(weightG: Double, minStockG: Double): StockStatus = when {
+        weightG <= 0.0 -> StockStatus.OUT
+        minStockG > 0.0 && weightG <= minStockG -> StockStatus.LOW
+        else -> StockStatus.OK
+    }
+
+    /** Severity ranking so we only alert when stock gets WORSE, never on refills. */
+    private fun severity(s: StockStatus) = when (s) {
+        StockStatus.OK -> 0
+        StockStatus.LOW -> 1
+        StockStatus.OUT -> 2
+    }
+
     /**
      * Deduct the grams quoted per material line for [quote], once. Returns the quote flagged
      * [Quotation.stockDeducted] = true (or unchanged if it was already deducted / has no lines).
@@ -173,6 +190,7 @@ class InventoryManager @Inject constructor(
                     quotationId = quote.id
                 ).toEntity()
             )
+            alertIfWorse(entity, prev, next)
         }
         return quote.copy(stockDeducted = true)
     }
@@ -194,6 +212,21 @@ class InventoryManager @Inject constructor(
                 note = note
             ).toEntity()
         )
+        alertIfWorse(entity, prev, next)
+    }
+
+    /** Fire a low/out-of-stock notification only when [prev]→[next] crosses into a worse bucket. */
+    private fun alertIfWorse(
+        entity: com.print3d.calculator.data.local.MaterialEntity,
+        prev: Double,
+        next: Double
+    ) {
+        val before = statusOf(prev, entity.minStockG)
+        val after = statusOf(next, entity.minStockG)
+        if (severity(after) > severity(before)) {
+            val label = if (entity.color.isBlank()) entity.name else "${entity.name} · ${entity.color}"
+            stockNotifier.notifyStock(entity.id, label, next.coerceAtLeast(0.0), after)
+        }
     }
 }
 

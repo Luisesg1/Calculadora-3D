@@ -24,7 +24,15 @@ import javax.inject.Inject
 
 enum class StatsRange { THIS_MONTH, LAST_3M, THIS_YEAR, ALL }
 
-data class MonthBucket(val label: String, val profit: Double)
+data class MonthBucket(
+    val label: String,
+    val profit: Double,
+    val income: Double = 0.0,
+    val costs: Double = 0.0
+)
+
+/** A client's aggregate footprint within the selected range. */
+data class ClientStat(val name: String, val revenue: Double, val quotes: Int)
 
 data class StatsData(
     val income: Double = 0.0,
@@ -33,6 +41,7 @@ data class StatsData(
     val quotes: Int = 0,
     val avgTicket: Double = 0.0,
     val months: List<MonthBucket> = emptyList(),
+    val topClients: List<ClientStat> = emptyList(),
     // CRM metrics.
     val created: Int = 0,
     val accepted: Int = 0,
@@ -133,9 +142,19 @@ class StatsViewModel @Inject constructor(
             }
             MonthBucket(
                 label = monthFmt.format(c.time).replaceFirstChar { it.uppercase() },
-                profit = list.sumOf { q -> q.result.total - q.result.productionCost }
+                profit = list.sumOf { q -> q.result.total - q.result.productionCost },
+                income = list.sumOf { q -> q.result.total },
+                costs = list.sumOf { q -> q.result.productionCost }
             )
         }.takeLast(6)
+
+        // Top clients by revenue in range (named clients only; walk-ins with blank names are skipped).
+        val topClients = quotes
+            .filter { it.input.clientName.isNotBlank() }
+            .groupBy { it.input.clientName.trim() }
+            .map { (name, list) -> ClientStat(name, list.sumOf { it.result.total }, list.size) }
+            .sortedByDescending { it.revenue }
+            .take(5)
 
         return StatsData(
             income = income,
@@ -144,6 +163,7 @@ class StatsViewModel @Inject constructor(
             quotes = quotes.size,
             avgTicket = income / quotes.size,
             months = buckets,
+            topClients = topClients,
             created = quotes.size,
             accepted = accepted,
             rejected = rejected,

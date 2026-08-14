@@ -400,4 +400,18 @@
     <string name="auth_tagline_login">Price smarter.\nQuote faster.\nPrint with profit.</string>
     <string name="auth_tagline_signup">Everything you need\nto price and sell.</string>
     <string name="auth_tagline_caption">More control. More profit.</string>
+
+    <!-- Low-stock notifications -->
+    <string name="notif_channel_stock_name">Low stock</string>
+    <string name="notif_channel_stock_desc">Alerts when a material runs low or out</string>
+    <string name="notif_low_stock_title">Low stock</string>
+    <string name="notif_low_stock_text" formatted="false">%1$s: %2$s g left</string>
+    <string name="notif_out_stock_title">Out of stock</string>
+    <string name="notif_out_stock_text" formatted="false">%1$s is out of stock</string>
+
+    <!-- Stats: top clients + income/costs -->
+    <string name="stats_top_clients">Top clients</string>
+    <string name="stats_no_clients">No clients in this range</string>
+    <string name="stats_client_quotes" formatted="false">%1$d quotes</string>
+    <string name="stats_income_vs_costs">Income vs costs</string>
 </resources>

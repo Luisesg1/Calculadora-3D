@@ -2,6 +2,7 @@ package com.print3d.calculator.feature.stats
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -117,6 +120,58 @@ fun StatsScreen(
                 }
             }
 
+            // Income vs costs, month by month.
+            if (ui.data.months.isNotEmpty()) {
+                item { IncomeVsCostChart(ui.data.months, currency) }
+            }
+
+            // Top clients by revenue in range.
+            item { Text(stringResource(R.string.stats_top_clients), style = MaterialTheme.typography.titleMedium) }
+            if (ui.data.topClients.isEmpty()) {
+                item {
+                    Text(
+                        stringResource(R.string.stats_no_clients),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                item {
+                    Surface(
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surface,
+                        shadowElevation = com.print3d.calculator.ui.theme.CardStyle.elevation,
+                        border = com.print3d.calculator.ui.theme.CardStyle.border,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(Modifier.padding(vertical = 6.dp)) {
+                            ui.data.topClients.forEachIndexed { i, c ->
+                                Row(
+                                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        "${i + 1}.",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.width(28.dp)
+                                    )
+                                    Column(Modifier.weight(1f)) {
+                                        Text(c.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                        Text(
+                                            stringResource(R.string.stats_client_quotes, c.quotes),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    Text(money(c.revenue), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // CRM funnel + inventory (advanced = Pro).
             item {
                 Text(stringResource(R.string.stats_crm_title), style = MaterialTheme.typography.titleMedium)
@@ -213,6 +268,69 @@ private fun StatBox(modifier: Modifier, label: String, value: String) {
             Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, maxLines = 1)
             Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+@Composable
+private fun IncomeVsCostChart(months: List<MonthBucket>, currency: AppCurrency) {
+    val incomeColor = MaterialTheme.colorScheme.primary
+    val costColor = MaterialTheme.colorScheme.error
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = com.print3d.calculator.ui.theme.CardStyle.elevation,
+        border = com.print3d.calculator.ui.theme.CardStyle.border,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(20.dp)) {
+            Text(stringResource(R.string.stats_income_vs_costs), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            // Legend.
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                LegendDot(incomeColor, stringResource(R.string.stats_income))
+                LegendDot(costColor, stringResource(R.string.stats_costs))
+            }
+            Spacer(Modifier.height(16.dp))
+            val maxV = max(1.0, months.maxOf { max(it.income, it.costs) })
+            Canvas(Modifier.fillMaxWidth().height(160.dp)) {
+                val n = months.size
+                val slot = size.width / n
+                val barW = slot * 0.28f
+                val gap = slot * 0.08f
+                val baseY = size.height
+                months.forEachIndexed { i, b ->
+                    val cx = slot * i + slot / 2f
+                    val incH = (b.income / maxV * (size.height - 6f)).toFloat()
+                    val costH = (b.costs / maxV * (size.height - 6f)).toFloat()
+                    drawRoundRect(
+                        color = incomeColor,
+                        topLeft = Offset(cx - barW - gap / 2f, baseY - incH),
+                        size = Size(barW, incH.coerceAtLeast(2f)),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(6f, 6f)
+                    )
+                    drawRoundRect(
+                        color = costColor,
+                        topLeft = Offset(cx + gap / 2f, baseY - costH),
+                        size = Size(barW, costH.coerceAtLeast(2f)),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(6f, 6f)
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                months.forEach {
+                    Text(it.label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LegendDot(color: Color, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Box(Modifier.size(10.dp).clip(androidx.compose.foundation.shape.CircleShape).background(color))
+        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

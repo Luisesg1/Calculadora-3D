@@ -400,4 +400,18 @@
     <string name="auth_tagline_login">Calcule melhor.\nOrce mais rápido.\nImprima com lucro.</string>
     <string name="auth_tagline_signup">Tudo o que você precisa\npara calcular e vender.</string>
     <string name="auth_tagline_caption">Mais controle. Mais lucro.</string>
+
+    <!-- Low-stock notifications -->
+    <string name="notif_channel_stock_name">Estoque baixo</string>
+    <string name="notif_channel_stock_desc">Avisos quando um material fica baixo ou acaba</string>
+    <string name="notif_low_stock_title">Estoque baixo</string>
+    <string name="notif_low_stock_text" formatted="false">%1$s: restam %2$s g</string>
+    <string name="notif_out_stock_title">Material esgotado</string>
+    <string name="notif_out_stock_text" formatted="false">%1$s esgotou</string>
+
+    <!-- Stats: top clients + income/costs -->
+    <string name="stats_top_clients">Melhores clientes</string>
+    <string name="stats_no_clients">Sem clientes neste período</string>
+    <string name="stats_client_quotes" formatted="false">%1$d orçamentos</string>
+    <string name="stats_income_vs_costs">Receita vs custos</string>
 </resources>

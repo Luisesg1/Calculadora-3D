@@ -35,7 +35,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +74,21 @@ fun MaterialsScreen(
     val lowStock by vm.lowStock.collectAsStateWithLifecycle()
     val currency by vm.currency.collectAsStateWithLifecycle()
     val isPro by monetization.isSubscribed.collectAsStateWithLifecycle()
+
+    // Ask once for the notification permission (Android 13+) so low-stock alerts can reach the user.
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val notifPermission = rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) {}
+    LaunchedEffect(Unit) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.POST_NOTIFICATIONS
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
     var editing by remember { mutableStateOf<Material?>(null) }
     var showEditor by remember { mutableStateOf(false) }
     var adjusting by remember { mutableStateOf<Material?>(null) }
