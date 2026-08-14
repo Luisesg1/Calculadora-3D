@@ -89,7 +89,11 @@ class SettingsRepository @Inject constructor(
     }
 
     suspend fun setTheme(v: AppThemeMode) = edit { it[Keys.THEME] = v.name }
-    suspend fun setLanguage(v: AppLanguage) = edit { it[Keys.LANGUAGE] = v.tag }
+    suspend fun setLanguage(v: AppLanguage) {
+        // Mirror to SharedPreferences first so Activity.attachBaseContext can read it synchronously.
+        com.print3d.calculator.core.util.LocaleHelper.persist(context, v.tag)
+        edit { it[Keys.LANGUAGE] = v.tag }
+    }
     suspend fun setCurrency(v: AppCurrency) = edit { it[Keys.CURRENCY] = v.code }
     suspend fun setElectricityRate(v: Double) = edit { it[Keys.ELECTRICITY] = v }
     suspend fun setDefaultMargin(v: Double) = edit { it[Keys.MARGIN] = v }
