@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.print3d.calculator.core.util.CurrencyFormatter
@@ -122,28 +123,48 @@ fun StatsSummaryCard(
 
 @Composable
 private fun StatCell(modifier: Modifier, icon: ImageVector, value: String, label: String) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
-            Modifier.size(32.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(9.dp)),
+            Modifier.size(36.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
         }
         Spacer(Modifier.height(10.dp))
-        Text(
-            value,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1
-        )
+        // Long currency values must never wrap or clip: shrink to fit the cell on one line.
+        AutoSizeValue(value)
+        Spacer(Modifier.height(2.dp))
         Text(
             label,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1
+            maxLines = 1,
+            textAlign = TextAlign.Center
         )
     }
+}
+
+/** A bold headline number that auto-shrinks its font so long values stay on a single line. */
+@Composable
+private fun AutoSizeValue(value: String) {
+    val baseStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+    var scaledStyle by remember(value) { mutableStateOf(baseStyle) }
+    Text(
+        value,
+        style = scaledStyle,
+        color = MaterialTheme.colorScheme.onSurface,
+        maxLines = 1,
+        softWrap = false,
+        textAlign = TextAlign.Center,
+        onTextLayout = { result ->
+            if (result.hasVisualOverflow && scaledStyle.fontSize > 15.sp) {
+                scaledStyle = scaledStyle.copy(fontSize = scaledStyle.fontSize * 0.9f)
+            }
+        }
+    )
 }
 
 private fun formatKg(kg: Double): String =
