@@ -197,7 +197,7 @@ fun CalculatorScreen(
                             clientSuggestions
                         )
                         AppTextField(form.projectName, { form = form.copy(projectName = it) }, stringResource(R.string.field_project), required = true)
-                        AppTextField(form.quantity, { form = form.copy(quantity = it) }, stringResource(R.string.field_quantity), numeric = true, required = true)
+                        AppTextField(form.quantity, { form = form.copy(quantity = it) }, stringResource(R.string.field_quantity), numeric = true, required = true, maxIntDigits = 5, maxDecimals = 0)
                         AppTextField(form.notes, { form = form.copy(notes = it) }, stringResource(R.string.field_notes), singleLine = false)
                     }
                 }
@@ -247,7 +247,8 @@ fun CalculatorScreen(
                                     },
                                     stringResource(R.string.field_grams),
                                     Modifier.width(96.dp),
-                                    numeric = true
+                                    numeric = true,
+                                    maxIntDigits = 6
                                 )
                                 if (form.materialLines.size > 1) {
                                     IconButton(onClick = {
@@ -274,16 +275,16 @@ fun CalculatorScreen(
                 AppCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppTextField(form.meters, { form = form.copy(meters = it) }, stringResource(R.string.field_meters), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_meters))
+                            AppTextField(form.meters, { form = form.copy(meters = it) }, stringResource(R.string.field_meters), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_meters), maxIntDigits = 6)
                             Spacer(Modifier.weight(1f))
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppTextField(form.printTimeH, { form = form.copy(printTimeH = it) }, stringResource(R.string.field_print_time), Modifier.weight(1f), numeric = true)
-                            AppTextField(form.postTimeH, { form = form.copy(postTimeH = it) }, stringResource(R.string.field_post_time), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_postprocess))
+                            AppTextField(form.printTimeH, { form = form.copy(printTimeH = it) }, stringResource(R.string.field_print_time), Modifier.weight(1f), numeric = true, maxIntDigits = 5)
+                            AppTextField(form.postTimeH, { form = form.copy(postTimeH = it) }, stringResource(R.string.field_post_time), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_postprocess), maxIntDigits = 5)
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppTextField(form.failurePct, { form = form.copy(failurePct = it) }, stringResource(R.string.field_failure), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_failures))
-                            AppTextField(form.wastePct, { form = form.copy(wastePct = it) }, stringResource(R.string.field_waste), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_waste))
+                            AppTextField(form.failurePct, { form = form.copy(failurePct = it) }, stringResource(R.string.field_failure), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_failures), maxIntDigits = 3)
+                            AppTextField(form.wastePct, { form = form.copy(wastePct = it) }, stringResource(R.string.field_waste), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_waste), maxIntDigits = 3)
                         }
                     }
                 }
@@ -338,12 +339,12 @@ fun CalculatorScreen(
                 AppCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppTextField(form.marginPct, { form = form.copy(marginPct = it) }, stringResource(R.string.field_margin), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_margin))
-                            AppTextField(form.taxPct, { form = form.copy(taxPct = it) }, stringResource(R.string.field_tax), Modifier.weight(1f), numeric = true)
+                            AppTextField(form.marginPct, { form = form.copy(marginPct = it) }, stringResource(R.string.field_margin), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_margin), maxIntDigits = 4)
+                            AppTextField(form.taxPct, { form = form.copy(taxPct = it) }, stringResource(R.string.field_tax), Modifier.weight(1f), numeric = true, maxIntDigits = 3)
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppTextField(form.discountPct, { form = form.copy(discountPct = it) }, stringResource(R.string.field_discount), Modifier.weight(1f), numeric = true)
-                            AppTextField(form.surchargePct, { form = form.copy(surchargePct = it) }, stringResource(R.string.field_surcharge), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_surcharge))
+                            AppTextField(form.discountPct, { form = form.copy(discountPct = it) }, stringResource(R.string.field_discount), Modifier.weight(1f), numeric = true, maxIntDigits = 3)
+                            AppTextField(form.surchargePct, { form = form.copy(surchargePct = it) }, stringResource(R.string.field_surcharge), Modifier.weight(1f), numeric = true, helpText = stringResource(R.string.help_surcharge), maxIntDigits = 4)
                         }
                         AppTextField(form.manualFinalPrice, { form = form.copy(manualFinalPrice = it) }, stringResource(R.string.field_final_price_manual), numeric = true, helpText = stringResource(R.string.help_manual_price))
                     }

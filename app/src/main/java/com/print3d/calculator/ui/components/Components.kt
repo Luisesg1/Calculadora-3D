@@ -193,12 +193,17 @@ fun AppTextField(
     required: Boolean = false,
     isError: Boolean = false,
     supportingText: String? = null,
-    helpText: String? = null
+    helpText: String? = null,
+    /** Numeric fields only: max integer digits and decimals accepted. Keeps totals sane. */
+    maxIntDigits: Int = 9,
+    maxDecimals: Int = 2
 ) {
     OutlinedTextField(
         value = value,
-        // Numeric fields reject letters/symbols: keep only digits and a single decimal point.
-        onValueChange = { raw -> onValueChange(if (numeric) sanitizeNumeric(raw) else raw) },
+        // Numeric fields reject letters/symbols and cap length: keep only digits + one decimal point.
+        onValueChange = { raw ->
+            onValueChange(if (numeric) sanitizeNumeric(raw, maxIntDigits, maxDecimals) else raw)
+        },
         label = { Text(if (required) "$label *" else label) },
         singleLine = singleLine,
         isError = isError,
@@ -213,14 +218,26 @@ fun AppTextField(
     )
 }
 
-/** Keeps only digits and a single decimal separator ('.' or ','), normalized to '.'. */
-private fun sanitizeNumeric(raw: String): String {
+/**
+ * Keeps only digits and a single decimal separator ('.' or ','), normalized to '.'.
+ * Caps the integer part to [maxIntDigits] and the fractional part to [maxDecimals] so
+ * astronomical inputs (and the runaway totals they produce) are impossible to type.
+ */
+private fun sanitizeNumeric(raw: String, maxIntDigits: Int, maxDecimals: Int): String {
     val sb = StringBuilder()
     var hasDot = false
+    var intDigits = 0
+    var decDigits = 0
     for (c in raw) {
         when {
-            c.isDigit() -> sb.append(c)
-            (c == '.' || c == ',') && !hasDot -> { sb.append('.'); hasDot = true }
+            c.isDigit() -> {
+                if (!hasDot) {
+                    if (intDigits < maxIntDigits) { sb.append(c); intDigits++ }
+                } else {
+                    if (decDigits < maxDecimals) { sb.append(c); decDigits++ }
+                }
+            }
+            (c == '.' || c == ',') && !hasDot && maxDecimals > 0 -> { sb.append('.'); hasDot = true }
         }
     }
     return sb.toString()
